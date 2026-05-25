@@ -8,262 +8,137 @@ namespace ConsoleApp1
 {
     internal class Program
     {
-        // Задача 1: Найти k-ю цифру в последовательности 10111213...9899
+        // Задача 1: Найти n-ю цифру в последовательности 0123456789101112...1920
         static void Task1()
         {
             Console.WriteLine("\n--- Задача 1 ---");
-            Console.Write("Введите k (1-180): ");
+            Console.Write("Введите n (1-32): ");
 
-            if (!int.TryParse(Console.ReadLine(), out int k))
+            if (!int.TryParse(Console.ReadLine(), out int n))
             {
                 Console.WriteLine("Ошибка: введите целое число!");
                 return;
             }
 
-            if (k < 1 || k > 180)
+            if (n < 1 || n > 32)
             {
-                Console.WriteLine("Ошибка: k должно быть от 1 до 180");
+                Console.WriteLine("Ошибка: n должно быть от 1 до 32");
                 return;
             }
 
-            // Строим последовательность из двузначных чисел
+            // Строим последовательность из 0 и 20 первых натуральных чисел (0..20)
             string sequence = "";
-            for (int i = 10; i <= 99; i++)
+            for (int i = 0; i <= 20; i++)
             {
                 sequence += i.ToString();
             }
 
             Console.WriteLine($"Последовательность: {sequence}");
-            Console.WriteLine($"{k}-я цифра: {sequence[k - 1]}");
+            Console.WriteLine($"Длина последовательности: {sequence.Length} цифр");
+            Console.WriteLine($"{n}-я цифра: {sequence[n - 1]}");
         }
 
-        // Задача 2: Переставить буквы между k-й и s-й в обратном порядке
+        // Задача 2: Переставить буквы между 2-й и 10-й в обратном порядке (с 3-й по 9-ю)
         static void Task2()
         {
-            string word = "информационное"; // слово из 15 букв
+            string word = "программирование"; // слово из 12 букв — замените своим
+
+            // Обрезаем до 12 букв если длиннее
+            if (word.Length > 12)
+                word = word.Substring(0, 12);
 
             Console.WriteLine("\n--- Задача 2 ---");
-            Console.WriteLine($"Исходное слово (15 букв): {word}");
-            Console.Write("Введите k и s (k < s, от 1 до 15): ");
+            Console.WriteLine($"Слово из 12 букв: {word}");
+            Console.WriteLine($"Длина слова: {word.Length}");
 
-            string[] inputs = Console.ReadLine().Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+            // Буквы между 2-й и 10-й — это с 3-й по 9-ю (индексы 2..8)
+            int start = 2; // индекс 3-й буквы (0-based)
+            int end = 8;   // индекс 9-й буквы (0-based)
+            int length = end - start + 1; // количество букв для переворота
 
-            if (inputs.Length < 2)
-            {
-                Console.WriteLine("Ошибка: введите два числа!");
-                return;
-            }
-
-            if (!int.TryParse(inputs[0], out int k) || !int.TryParse(inputs[1], out int s))
-            {
-                Console.WriteLine("Ошибка: введите целые числа!");
-                return;
-            }
-
-            if (k < 1 || s > 15 || k >= s)
-            {
-                Console.WriteLine("Ошибка: некорректные значения k и s");
-                Console.WriteLine("Требования: 1 <= k < s <= 15");
-                return;
-            }
-
-            // Сохраняем исходное слово для сравнения
-            string original = word;
-
-            // Корректируем индексы (в C# строки индексируются с 0)
-            int start = k - 1; // позиция k-й буквы
-            int end = s - 1;   // позиция s-й буквы
-
-            Console.Write($"Буквы для перестановки (с {k + 1}-й по {s - 1}-ю): ");
-            for (int i = start + 1; i < end; i++)
-            {
+            Console.Write($"Буквы с 3-й по 9-ю (до): ");
+            for (int i = start; i <= end; i++)
                 Console.Write(word[i]);
-            }
             Console.WriteLine();
 
-            // Преобразуем строку в массив char для изменения
+            // Преобразуем в массив и переворачиваем нужный участок
             char[] charArray = word.ToCharArray();
-
-            // Переворачиваем часть между k и s (с k+1 по s-1)
-            Array.Reverse(charArray, start + 1, end - start - 1);
-
+            Array.Reverse(charArray, start, length);
             word = new string(charArray);
+
+            Console.Write($"Буквы с 3-й по 9-ю (после): ");
+            for (int i = start; i <= end; i++)
+                Console.Write(word[i]);
+            Console.WriteLine();
 
             Console.WriteLine($"Результат: {word}");
         }
 
-        // Задача 3: Найти сумму всех чисел в тексте
+        // Задача 3: Напечатать все цифры, имеющиеся в тексте
         static void Task3()
         {
             Console.WriteLine("\n--- Задача 3 ---");
             Console.Write("Введите текст: ");
             string text = Console.ReadLine();
 
-            int sum = 0;
-            string numStr = "";
-            int numberCount = 0;
+            List<char> digits = new List<char>();
 
-            for (int i = 0; i < text.Length; i++)
+            foreach (char c in text)
             {
-                char c = text[i];
-
                 if (char.IsDigit(c))
                 {
-                    numStr += c; // накапливаем цифры числа
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(numStr))
-                    {
-                        int number = int.Parse(numStr);
-                        sum += number;
-                        numberCount++;
-                        Console.WriteLine($"Найдено число: {number}");
-                        numStr = "";
-                    }
+                    digits.Add(c);
                 }
             }
 
-            // Проверяем, осталось ли число в конце строки
-            if (!string.IsNullOrEmpty(numStr))
+            if (digits.Count == 0)
             {
-                int number = int.Parse(numStr);
-                sum += number;
-                numberCount++;
-                Console.WriteLine($"Найдено число: {number}");
-            }
-
-            if (numberCount == 0)
-            {
-                Console.WriteLine("В тексте не найдено чисел.");
+                Console.WriteLine("В тексте цифр не найдено.");
             }
             else
             {
-                Console.WriteLine($"Количество найденных чисел: {numberCount}");
-                Console.WriteLine($"Сумма всех чисел: {sum}");
+                Console.Write("Найденные цифры: ");
+                foreach (char d in digits)
+                {
+                    Console.Write(d + " ");
+                }
+                Console.WriteLine();
+                Console.WriteLine($"Всего цифр: {digits.Count}");
             }
         }
 
-        // Дополнительная задача: Найти сумму чисел с учетом знака минус
-        static void Task3_Advanced()
-        {
-            Console.WriteLine("\n--- Задача 3 (расширенная) ---");
-            Console.Write("Введите текст: ");
-            string text = Console.ReadLine();
-
-            int sum = 0;
-            string numStr = "";
-            bool isNegative = false;
-            int numberCount = 0;
-
-            for (int i = 0; i < text.Length; i++)
-            {
-                char c = text[i];
-
-                // Проверяем на знак минус перед числом
-                if (c == '-' && i + 1 < text.Length && char.IsDigit(text[i + 1]))
-                {
-                    isNegative = true;
-                    continue;
-                }
-
-                if (char.IsDigit(c))
-                {
-                    numStr += c;
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(numStr))
-                    {
-                        int number = int.Parse(numStr);
-                        if (isNegative) number = -number;
-
-                        sum += number;
-                        numberCount++;
-                        Console.WriteLine($"Найдено число: {(isNegative ? "-" : "")}{numStr}");
-
-                        numStr = "";
-                        isNegative = false;
-                    }
-                }
-            }
-
-            // Проверяем, осталось ли число в конце строки
-            if (!string.IsNullOrEmpty(numStr))
-            {
-                int number = int.Parse(numStr);
-                if (isNegative) number = -number;
-
-                sum += number;
-                numberCount++;
-                Console.WriteLine($"Найдено число: {(isNegative ? "-" : "")}{numStr}");
-            }
-
-            if (numberCount == 0)
-            {
-                Console.WriteLine("В тексте не найдено чисел.");
-            }
-            else
-            {
-                Console.WriteLine($"Количество найденных чисел: {numberCount}");
-                Console.WriteLine($"Сумма всех чисел: {sum}");
-            }
-        }
-
-        // Функция для демонстрации примеров работы
+        // Демонстрация всех задач с примерами
         static void Demo()
         {
             Console.WriteLine("\n=== ДЕМОНСТРАЦИЯ РАБОТЫ ===");
 
             // Демо задачи 1
-            Console.WriteLine("\nЗадача 1 (пример для k=25):");
-            int k = 25;
+            Console.WriteLine("\nЗадача 1 (пример для n=15):");
             string sequence = "";
-            for (int i = 10; i <= 99; i++)
-            {
+            for (int i = 0; i <= 20; i++)
                 sequence += i.ToString();
-            }
-            Console.WriteLine("Последовательность: 10 11 12 ... 98 99");
-            Console.WriteLine($"{k}-я цифра: {sequence[k - 1]}");
+            Console.WriteLine($"Последовательность: {sequence}");
+            Console.WriteLine($"15-я цифра: {sequence[14]}");
 
             // Демо задачи 2
-            Console.WriteLine("\nЗадача 2 (пример для k=3, s=8):");
-            string word = "информационное";
+            Console.WriteLine("\nЗадача 2:");
+            string word = "программиров";
             Console.WriteLine($"Исходное слово: {word}");
-
             char[] charArray = word.ToCharArray();
-            Array.Reverse(charArray, 2, 5); // с 3-й по 7-ю (индексы 2-6)
+            Array.Reverse(charArray, 2, 7); // индексы 2..8, длина 7
             word = new string(charArray);
-
-            Console.WriteLine($"После перестановки букв с 4-й по 7-ю: {word}");
+            Console.WriteLine($"После перестановки букв с 3-й по 9-ю: {word}");
 
             // Демо задачи 3
-            Console.WriteLine("\nЗадача 3 (пример для текста 'abc123 def45 6gh'):");
-            string text = "abc123 def45 6gh";
-            Console.WriteLine($"Текст: {text}");
-
-            int sum = 0;
-            string numStr = "";
+            Console.WriteLine("\nЗадача 3 (пример для текста 'abc1 de23f 4gh'):");
+            string text = "abc1 de23f 4gh";
+            Console.Write("Цифры в тексте: ");
             foreach (char c in text)
             {
                 if (char.IsDigit(c))
-                {
-                    numStr += c;
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(numStr))
-                    {
-                        sum += int.Parse(numStr);
-                        numStr = "";
-                    }
-                }
+                    Console.Write(c + " ");
             }
-            if (!string.IsNullOrEmpty(numStr))
-            {
-                sum += int.Parse(numStr);
-            }
-            Console.WriteLine($"Сумма чисел: {sum}");
+            Console.WriteLine();
         }
 
         static void Main(string[] args)
@@ -271,15 +146,13 @@ namespace ConsoleApp1
             Console.OutputEncoding = Encoding.UTF8;
             Console.InputEncoding = Encoding.UTF8;
 
-           
             while (true)
             {
                 Console.WriteLine("\n========== МЕНЮ ==========");
-                Console.WriteLine("1 - Найти k-ю цифру (10111213...9899)");
-                Console.WriteLine("2 - Переставить буквы в слове");
-                Console.WriteLine("3 - Найти сумму чисел в тексте");
-                Console.WriteLine("4 - Найти сумму чисел (с учетом знака минус)");
-                Console.WriteLine("5 - Демонстрация примеров");
+                Console.WriteLine("1 - Найти n-ю цифру (0 1 2 ... 19 20)");
+                Console.WriteLine("2 - Переставить буквы в слове (с 3-й по 9-ю)");
+                Console.WriteLine("3 - Напечатать все цифры из текста");
+                Console.WriteLine("4 - Демонстрация примеров");
                 Console.WriteLine("0 - Выход");
                 Console.WriteLine("===========================");
                 Console.Write("Выберите задачу: ");
@@ -304,9 +177,6 @@ namespace ConsoleApp1
                         Task3();
                         break;
                     case 4:
-                        Task3_Advanced();
-                        break;
-                    case 5:
                         Demo();
                         break;
                     case 0:
